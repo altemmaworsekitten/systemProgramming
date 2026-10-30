@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+# сборка C
+*.exe
+*.obj
+*.o
+*.pdb
+*.ilk
+*.dll
+*.so
+*.dylib
+build/
+labs/*/hello
+# система и редакторы
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
