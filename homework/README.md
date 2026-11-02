@@ -5,7 +5,7 @@
 
 | Папка | Задание |
 |---|---|
-| — | пока заданий нет |
+| `agent/`, `agent/n8n/` | [Задание модуля 1: время работы системы в агенте и объяснение модели](https://maximbytecamp.github.io/sysprog_makarov/temy/11-zadanie-modulya-1/index.html) — сдаётся не в `homework`, а в папку агента |
 
 ## Как сдать
 
