@@ -5,4 +5,6 @@
 
 | Файл | Что в нём |
 |---|---|
-| — | пока пусто |
+| `brain.py` | `CoreInfo` (зеркало `struct core_info`), `CoreProc`, `get_info()`, `list_procs()`, `parents()`, `send()` в n8n; печатает сообщение `agent_started` в JSON |
+
+Запуск: `python3 brain.py` — только JSON; `python3 brain.py http://127.0.0.1:5678/webhook/agent` — ещё и отправка в n8n.
