@@ -1,0 +1,129 @@
+{
+  "name": "agent-uptime",
+  "nodes": [
+    {
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "5f0c7a52-agent-4b1e-9d3a-uptime000001",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent",
+        "options": {}
+      }
+    },
+    {
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ты помощник администратора. Агент прислал данные компьютера.\nОбъясни простыми словами по-русски в 2–3 предложениях, сколько компьютер\nработает без перезагрузки и стоит ли его перезагрузить.\nПиши только по-русски. Не пересчитывай числа, бери их как есть.\nКомпьютер: {{ $json.body.host }}.\nРаботает без перезагрузки: {{ Math.floor($json.body.uptime_s / 86400) }} дн. {{ Math.floor($json.body.uptime_s % 86400 / 3600) }} ч."
+      }
+    },
+    {
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "Ollama Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        240,
+        220
+      ],
+      "parameters": {
+        "model": "qwen3-faith:latest",
+        "options": {
+          "numCtx": 4096,
+          "numGpu": 28
+        }
+      },
+      "credentials": {
+        "ollamaApi": {
+          "id": "ollamaLocal01",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        0
+      ],
+      "webhookId": "5f0c7a52-mail-4b1e-9d3a-uptime000002",
+      "parameters": {
+        "fromEmail": "agent@sysprog.local",
+        "toEmail": "admin@sysprog.local",
+        "subject": "={{ $('Webhook').item.json.body.event }} · {{ $('Webhook').item.json.body.host }}",
+        "emailFormat": "text",
+        "text": "={{ $json.text }}\n\n---\nСообщение агента:\n{{ JSON.stringify($('Webhook').item.json.body, null, 2) }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "credentials": {
+        "smtp": {
+          "id": "smtpLocal0001",
+          "name": "SMTP local (Mailpit)"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "05d630d6-3c39-4e7d-b5ab-5f39f3d7b22a",
+  "meta": null,
+  "id": "agentUptime0001",
+  "tags": []
+}
